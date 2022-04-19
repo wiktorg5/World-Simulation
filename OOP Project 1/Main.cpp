@@ -6,14 +6,24 @@ using namespace std;
 
 int main()
 {
-	World* world = new World(20,20);
-
-	for (int i = 0; i < 5; i++)
-	{
-		world->newTurn();
-		world->printBoard();
-	}
+	srand(time(0));
 	
+	cout << "World Simulation by Wiktor Wysocki 188628" << endl;
+	cout << "Click 'n' for next turn, click 'x' to finish simulation" << endl;
+	
+	string command;
+	World world(25, 25);
 
+	/*while(cin>>command)
+	{
+		if (command == "n")
+			world.newTurn();
+		else if (command == "x")
+			break;
+	}*/
+	for(int i=0;i<100;i++)
+		world.newTurn();
+	
+	
 	return 0;
 }

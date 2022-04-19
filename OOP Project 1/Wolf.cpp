@@ -1,12 +1,15 @@
 #include "Everything.h"
 
-Wolf::Wolf() {};
-
-Wolf::Wolf(int givenX, int givenY, World* givenWorld) {
-	this->initiative = 4;
+Wolf::Wolf(Coordinates coordinates, World& world)
+	:Animal(coordinates,world) {
+	this->initiative = 5;
 	this->strength = 9;
 }
 
-char Wolf::draw() {
-	return '!';
+string Wolf::draw() {
+	return "!";
+}
+
+Organism* Wolf::breedCopy(Coordinates coordinates) {
+	return new Wolf(coordinates, this->world);
 }

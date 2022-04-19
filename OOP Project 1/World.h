@@ -9,17 +9,26 @@ class Organism;
 
 class World {
 	int width, height;
-	vector<Organism*> organisms;
 	int turnNumber = 0;
+	
 public:
 	vector< vector< Organism* > > board;
+	vector<Organism*> organisms;
+	vector<Organism*> plantsToAdd;
+	vector<Organism*> AnimalsToAdd;
+	vector<string> comments;
 
 	World(int widthGiven, int heightGiven);
+	void sortOrganisms();
+	static bool compareOrganisms(Organism* org1, Organism* org2);
 	void firstOrganisms();
 	void printBoard();
 	void newTurn();
-	void moveAfterKill(Organism* killedOrganism, Organism* winOrganism);
-	void kill(Organism* killedOrganism, Organism* winOrganism);
+	void moveAfterKill(Organism& killedOrganism, Organism& winOrganism, Organism& attacker);
+	void kill(Organism& killedOrganism, Organism& winOrganism, Organism& attacker);
+	Organism* getRandomOrganism(int x, int y);
+	void addOrganisms();
+	void moveEatPlant(Organism& killedOrganism, Organism& winOrganism);
 
 	int getWidth();
 	int getHeight();

@@ -1,4 +1,7 @@
 #include "Everything.h"
+#include "World.h"
+#include<string>
+#include<algorithm>
 
 World::World(int widthGiven, int heightGiven)
 {
@@ -14,37 +17,94 @@ World::World(int widthGiven, int heightGiven)
 	}
 }
 
-int World::getWidth() {
-	return width;
+void World::sortOrganisms() {
+	sort(organisms.begin(), organisms.end(), compareOrganisms);
 }
-int World::getHeight() {
-	return height;
+bool World::compareOrganisms(Organism* org1, Organism* org2) {
+	if(org1->initiative > org2->initiative) return true;
+	if (org1->initiative < org2->initiative) return false;
+
+	if (org1->age > org2->age) return true;
+	if (org1->age < org2->age) return false;
+
+	return false;
 }
 
+int World::getWidth() {
+	return this->width;
+}
+int World::getHeight() {
+	return this->height;
+}
+
+Organism* World::getRandomOrganism(int x,int y) {
+
+	int randomNum = rand() % 100;
+	Organism* org = NULL;
+
+	if (randomNum >= 0 && randomNum <= 10)
+		org = new Wolf({ x, y }, *this);
+	else if (randomNum > 10 && randomNum <= 20)
+		org = new Sheep({ x, y }, *this);
+	else if (randomNum > 20 && randomNum <= 30)
+		org = new Turtle({ x, y }, *this);
+	else if (randomNum > 30 && randomNum <= 40)
+		org = new Fox({ x, y }, *this);
+	else if (randomNum > 40 && randomNum <= 50)
+		org = new Antelope({ x, y }, *this);
+	else if (randomNum > 50 && randomNum <= 60)
+		org = new Grass({ x, y }, *this);
+	else if (randomNum > 60 && randomNum <= 70)
+		org = new SowThistle({ x, y }, *this);
+	else if (randomNum > 70 && randomNum <= 80)
+		org = new Belladonna({ x, y }, *this);
+	else if (randomNum > 80 && randomNum <= 90)
+		org = new Guarana({ x, y }, *this);
+	else
+		org = new Hogweed({ x, y }, *this);
+
+	return org;
+}
 void World::firstOrganisms() {
-	int numberOfOrganisms = (height * width) / 15;
+	int numberOfOrganisms = (height * width) / 20;
 	if (numberOfOrganisms == 0)
 		numberOfOrganisms = 1;
 
-	srand(time(0));
 	int x, y;
 	for (int k = 0; k < numberOfOrganisms; k++)
 	{
-		do {
-			x = rand() % width;
-			y = rand() % height;
-			if (board[x][y] == NULL)
-			{
-				board[x][y] = new Wolf(x, y, this);
-				break;
-			}
-		} while (board[x][y] == NULL);
+		x = rand() % width;
+		y = rand() % height;
 
-		organisms.push_back(board[x][y]);
+		Organism* org = NULL;
+
+		while (true)
+		{
+			if (this->board[x][y] == NULL)
+			{
+				if (k == 0)
+					org = new Human({ x,y }, *this);
+				else
+					org = getRandomOrganism(x,y);
+			}
+			else
+			{
+				x = rand() % width;
+				y = rand() % height;
+			}
+			if(org!=NULL)
+				break;
+		}
+
+		this->board[x][y] = org;
+		organisms.push_back(org);		
 	}
 }
 
 void World::printBoard() {
+
+	system("CLS");
+
 	for (int i = 0; i < board.size(); i++)
 	{
 		for (int k = 0; k < board[i].size(); k++)
@@ -56,35 +116,108 @@ void World::printBoard() {
 		}
 		cout << endl;
 	}
+	cout << "Turn " + to_string(turnNumber) + " events" << endl;
+	for (int i = 0; i < comments.size(); i++)
+	{
+		cout << comments[i] << endl;
+	}
+	cout << "There are " + to_string(organisms.size()) + " alive" << endl;
 	cout << "---------------------------" << endl;
+	comments.clear();
 }
 
 void World::newTurn() {
+
+	for (int i = 0; i < organisms.size(); i++)
+		organisms[i]->age++;
+
+	sortOrganisms();
+
 	if (this->turnNumber == 0)
 		firstOrganisms();
 	else
 	{
 		for (int i = 0; i < organisms.size(); i++)
 		{
-			organisms[i]->action();
+			this->organisms[i]->action();
+
+			//checking if hasn't already died
+			if (organisms.size() == i + 1)
+			{
+				//if it is Antelope it has a second move
+				if (Antelope* v = dynamic_cast<Antelope*>(organisms[i]))
+					this->organisms[i]->action();
+			}
 		}
 	}
 	turnNumber++;
+	this->printBoard();
+	this->addOrganisms();
 }
 
-void World::moveAfterKill(Organism* killedOrganism, Organism* winOrganism){
-	board[killedOrganism->getX()][killedOrganism->getY()] = winOrganism; 
-	board[winOrganism->getX()][winOrganism->getY()] = NULL;
-	
+void World::moveAfterKill(Organism& killedOrganism, Organism& winOrganism, Organism& attacker){
+	comments.push_back("Organism " + killedOrganism.draw() + " has been killed by Organism " + winOrganism.draw() + " at position x:" + to_string(winOrganism.getX()) + " y: " + to_string(winOrganism.getY()));
+	if (&killedOrganism == &attacker)
+	{
+		board[killedOrganism.getX()][killedOrganism.getY()] = NULL;
+	}
+	else
+	{
+		board[killedOrganism.getX()][killedOrganism.getY()] = NULL;
+		board[killedOrganism.getX()][killedOrganism.getY()] = &winOrganism;
+		board[winOrganism.getX()][winOrganism.getY()] = NULL;
+		winOrganism.setCoordinates({ winOrganism.getNewX(),winOrganism.getNewY() });
+	}
 }
-void World::kill(Organism* killedOrganism, Organism* winOrganism) {
+
+void World::kill(Organism& killedOrganism, Organism& winOrganism, Organism& attacker) {
+
 	for (int i = 0; i < organisms.size(); i++)
 	{
-		if (organisms[i] == killedOrganism)
+		if (organisms[i] == &killedOrganism)
 		{
-			moveAfterKill(killedOrganism, winOrganism);
+			if (&attacker == &killedOrganism)
+			{
+				if (Plant* v = dynamic_cast<Plant*>(&winOrganism))
+				{
+					moveEatPlant(killedOrganism,winOrganism);
+					for (int p = 0; p < organisms.size(); p++)
+					{
+						if(organisms[p] == &winOrganism)
+							organisms.erase(organisms.begin() + p);
+					}		
+				}
+				else
+					moveAfterKill(killedOrganism, winOrganism, attacker);
+			}
+			else
+				moveAfterKill(killedOrganism, winOrganism, attacker);
+
 			organisms.erase(organisms.begin() + i);
+			break;
 		}
 	}
-
 }
+
+void World::moveEatPlant(Organism& killedOrganism, Organism& winOrganism) {
+	board[killedOrganism.getX()][killedOrganism.getY()] = NULL;
+	board[winOrganism.getX()][winOrganism.getY()] = NULL;
+}
+void World::addOrganisms() {
+	for (int i = 0; i < plantsToAdd.size(); i++)
+	{
+		cout << plantsToAdd[i]->draw() << endl;
+		this->organisms.push_back(plantsToAdd[i]);
+		this->board[plantsToAdd[i]->coordinates.x][plantsToAdd[i]->coordinates.y] = plantsToAdd[i];
+	}
+	plantsToAdd.clear();
+
+	for (int i = 0; i < AnimalsToAdd.size(); i++)
+	{
+		cout << AnimalsToAdd[i]->draw() << endl;
+		this->organisms.push_back(AnimalsToAdd[i]);
+		this->board[AnimalsToAdd[i]->coordinates.x][AnimalsToAdd[i]->coordinates.y] = AnimalsToAdd[i];
+	}
+	AnimalsToAdd.clear();
+}
+

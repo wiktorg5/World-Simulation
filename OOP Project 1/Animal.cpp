@@ -1,46 +1,143 @@
 #include "Everything.h"
 
-Animal::Animal() {};
+Animal::Animal(Coordinates coordinates,World& world)
+	: Organism(coordinates,world) {}
 
-Animal::Animal(int givenX, int givenY, World* givenWorld) {
-	this->coordinates.x = givenX;
-	this->coordinates.y = givenY;
-}
-void Animal::action() {
-	srand(time(0));
-	int randArr[] = {-1, 0, 1};
-	int x, y;
-	x = getX() + randArr[ rand() % 3];
-	y = getY() + randArr[rand() % 3];
+Coordinates Animal::makeNewXY(Coordinates coordinates) {
 
-	while (true)
+	vector<Coordinates> arrXY = arrComb;
+
+	//if it's Turtle there will be 75% of {0,0} points to choose from
+	if (Turtle* v = dynamic_cast<Turtle*>(this))
 	{
-		if (x > world->getWidth() || x<0 || y>world->getHeight() || y < 0)
-		{
-			x = getX() + randArr[rand() % 3];
-			y = getY() + randArr[rand() % 3];
+		for (int i = 0; i < 20; i++) {
+			arrXY.push_back({ 0,0 });
 		}
-		else
-			break;
 	}
 	
-	this->newX = x;
-	this->newY = y;
+	int randCombination = rand() % arrXY.size();
+	Coordinates randomXY = arrXY[randCombination];
 
-	if (world->board[x][y] != NULL)
+	int newX = randomXY.x + coordinates.x;
+	int newY = randomXY.y + coordinates.y;
+	
+	while (true)
 	{
-		world->board[coordinates.x][coordinates.y] = NULL;
-		world->board[newX][newY] = this;
-		coordinates.x = newX;
-		coordinates.y = newY;
+		if (newX >= this->world.getWidth() || newX < 0 || newY >= this->world.getHeight() || newY < 0)
+		{
+			arrXY.erase(arrXY.begin() + randCombination);
+			if (arrXY.size() == 0)
+			{
+				return coordinates;
+			}
+			else 
+			{
+				randCombination = rand() % arrXY.size();
+				randomXY = arrXY[randCombination];
+				newX = randomXY.x + coordinates.x;
+				newY = randomXY.y + coordinates.y;
+			}
+		}
+		else
+		{
+			randomXY.x = newX;
+			randomXY.y = newY;
+			break;
+		}
 	}
-	else
+	return randomXY;
+}
+void Animal::action() {
+	Coordinates newCoordinates = this->makeNewXY(this->coordinates);
+	
+	this->newCoordinates = newCoordinates;
+
+	if (world.board[newCoordinates.x][newCoordinates.y] == NULL)
+	{
+		world.board[newCoordinates.x][newCoordinates.y] = this;
+		world.board[coordinates.x][coordinates.y] = NULL;
+		this->coordinates = this->newCoordinates;
+	}
+	else if(this->newCoordinates.x == this->coordinates.x && this->newCoordinates.y == this->coordinates.y)
+	{
+		return;
+	}
+	else 
+	{
 		collision();
+	}	
 }
 
-void Animal::collision() {
-	if (world->board[newX][newY]->getStrength() < this->strength)
-		world->kill(world->board[newX][newY],this);
+void Animal::basicCollision() {
+	
+	if (world.board[this->newCoordinates.x][this->newCoordinates.y]->getStrength() < this->strength)
+		world.kill(*world.board[this->newCoordinates.x][this->newCoordinates.y], *this, *this);
+
+	else if (world.board[this->newCoordinates.x][this->newCoordinates.y]->getStrength() > this->strength)
+		world.kill(*this, *world.board[this->newCoordinates.x][this->newCoordinates.y],*this);
+
+	else if (typeid(*this->world.board[newCoordinates.x][newCoordinates.y]) == typeid(*this))
+		this->breeding(world.board[newCoordinates.x][newCoordinates.y]);
 	else
-		world->kill(this, world->board[newX][newY]);
+		world.kill(*world.board[this->newCoordinates.x][this->newCoordinates.y], *this,*this);
+}
+void Animal::collision() {
+
+	int chanceToBackFight = rand() % 100;
+
+	if (Turtle* v = dynamic_cast<Turtle*>(world.board[this->newCoordinates.x][this->newCoordinates.y]))
+	{
+		if (this->strength > 5)
+		{
+			this->basicCollision();
+		}
+	}
+	else if (Antelope* v = dynamic_cast<Antelope*>(world.board[this->newCoordinates.x][this->newCoordinates.y]))
+	{
+		if (chanceToBackFight >= 50)
+			dynamic_cast<Antelope*>(world.board[this->newCoordinates.x][this->newCoordinates.y])->backFromFight(dynamic_cast<Antelope*>(world.board[this->newCoordinates.x][this->newCoordinates.y]));
+		else
+			this->basicCollision();
+	}
+	else if (Antelope* v = dynamic_cast<Antelope*>(this))
+	{
+		if (chanceToBackFight >= 50)
+			dynamic_cast<Antelope*>(this)->backFromFight(dynamic_cast<Antelope*>((this)));
+		else
+			this->basicCollision();
+	}
+	else if (Guarana* v = dynamic_cast<Guarana*>(world.board[this->newCoordinates.x][this->newCoordinates.y]))
+	{
+		this->strength += 3;
+	}
+	else
+		this->basicCollision();
+}
+
+void Animal::breeding(Organism* secondAnimal) {
+
+	Coordinates newOrganismCoordinates;
+
+	int byWhichSpawn = rand() % 100;
+	if (byWhichSpawn < 50)
+	{
+		newOrganismCoordinates = makeNewXYToSow(this->coordinates);
+	}
+	else
+	{
+		newOrganismCoordinates = makeNewXYToSow(secondAnimal->getCoordinates());
+	}
+	this->breedBasic(newOrganismCoordinates);
+	cout << "Breeding" << endl;
+}
+
+void Animal::breedBasic(Coordinates newOrganismCoordinates) {
+	if (newOrganismCoordinates.x == this->coordinates.x && newOrganismCoordinates.y == this->coordinates.y)
+		return;
+	else
+	{
+		Organism* newOrg = this->breedCopy(newOrganismCoordinates);
+		cout << newOrg->draw() << endl;
+		this->world.AnimalsToAdd.push_back(newOrg);
+	}
 }
