@@ -143,10 +143,14 @@ public:
 };
 
 class Human : public Animal {
+	bool special_ability = false;
+	Coordinates newCoordinates;
 public:
 	Human(Coordinates coordinates, World& world);
 	void action();
-	void changeHumanPosition(int direction);
+	void changeHumanPosition();
 	string draw();
+	bool checkCoordinates(int direction);
+	void purification();
 };
 

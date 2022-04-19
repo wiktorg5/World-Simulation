@@ -1,5 +1,6 @@
 #include "Everything.h"
 #include <conio.h>
+#include <string>
 
 #define UP 0
 #define RIGHT 1
@@ -11,6 +12,7 @@
 #define KEY_LEFT 75
 #define KEY_RIGHT 77
 #define X_SIGN 120
+#define Q_SIGN 113
 
 Human::Human(Coordinates coordinates, World& world) 
 	: Animal(coordinates, world) {
@@ -33,7 +35,7 @@ void Human::action() {
 		int toBreak = 0;
 		switch ((input = _getch())) {
 		case X_SIGN:
-			toBreak=1;
+			toBreak = 1;
 			break;
 		case KEY_UP:
 			direction = UP;
@@ -51,46 +53,84 @@ void Human::action() {
 			direction = LEFT;
 			cout << "LEFT" << endl;
 			break;
+		case Q_SIGN:
+			this->special_ability = true;
+			cout << "Special ability activated" << endl;
+		}
+		if (checkCoordinates(direction) == false)
+		{
+			cout << "Choose proper direction or do not choose any direction" << endl;
+			toBreak = 0;
 		}
 		if (toBreak == 1)
 			break;
 	}
-	cout << direction << endl;
+
 	if(direction != -1)
-		changeHumanPosition(direction);
-	
+		changeHumanPosition();
+
+	if (special_ability)
+		purification();
 }
 
-void Human::changeHumanPosition(int direction) {
-
+bool Human::checkCoordinates(int direction) {
 	int newX = this->coordinates.x;
 	int newY = this->coordinates.y;
 
 	if (direction == UP)
-	{
 		newX--;
-	}
 	else if (direction == RIGHT)
-	{
 		newY++;
-	}
 	else if (direction == DOWN)
-	{
 		newX++;
-	}
 	else if (direction == LEFT)
-	{
 		newY--;
-	}
+
 	if (newX >= this->world.getWidth() || newX < 0 || newY >= this->world.getHeight() || newY < 0)
 	{
 		cout << "You tried to go out of this world" << endl;
+		return false;
 	}
 	else
 	{
-		world.board[coordinates.x][coordinates.y] = NULL;
-		this->coordinates.y = newY;
-		this->coordinates.x = newX;
-		world.board[coordinates.x][coordinates.y] = this;
+		this->newCoordinates = { newX,newY };
+		return true;
 	}	
+}
+
+void Human::changeHumanPosition() {
+
+		world.board[coordinates.x][coordinates.y] = NULL;
+		this->coordinates.y = newCoordinates.y;
+		this->coordinates.x = newCoordinates.x;
+		world.board[coordinates.x][coordinates.y] = this;
+}
+
+void Human::purification() {
+	for (int i = 0; i < arrComb.size(); i++)
+	{
+		int newX = this->coordinates.x + arrComb[i].x;
+		int newY = this->coordinates.y + arrComb[i].y;
+
+		if (newX >= this->world.getWidth() || newX < 0 || newY >= this->world.getHeight() || newY < 0)
+			continue;
+
+		Organism* orgToKill = world.board[newX][newY];
+
+		if (orgToKill != NULL)
+		{
+			world.board[orgToKill->getX()][orgToKill->getY()] = NULL;
+
+			for (int i = 0; i < world.organisms.size(); i++)
+			{
+				if (world.organisms[i] == orgToKill)
+				{
+					world.organisms.erase(world.organisms.begin() + i);
+				}
+			}
+			world.comments.push_back("Organism " + orgToKill->draw() + " has been killed by Organism " + this->draw() + " at position x:" + to_string(orgToKill->getX()) + " y: " + to_string(orgToKill->getY()));
+		}
+		
+		
+	}
 }
