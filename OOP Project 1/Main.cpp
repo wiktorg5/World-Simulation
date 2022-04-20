@@ -24,8 +24,6 @@ int main()
 
 	while(input=_getch())
 	{
-		cout << "World Simulation by Wiktor Wysocki 188628" << endl;
-		cout << "Click 'n' for next turn, click 'x' to finish simulation" << endl;
 		if (input == N_SIGN)
 			world.newTurn();
 		else if (input == X_SIGN)

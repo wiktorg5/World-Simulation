@@ -51,39 +51,3 @@ Coordinates Fox::makeNewXY(Coordinates coordinates) {
 Organism* Fox::breedCopy(Coordinates coordinates) {
 	return new Fox(coordinates, this->world);
 }
-//void Fox::action() {
-//
-//	Coordinates newCoordinates = makeNewXY(this->coordinates);
-//	
-//	this->newCoordinates = newCoordinates;
-//
-//	while (true)
-//	{
-//		if (world.board[newCoordinates.x][newCoordinates.y] == NULL)
-//		{
-//			world.board[newCoordinates.x][newCoordinates.y] = this;
-//			world.board[coordinates.x][coordinates.y] = NULL;
-//			this->coordinates = this->newCoordinates;
-//			return;
-//		}
-//		else if (newCoordinates.x == this->coordinates.x && newCoordinates.y == this->coordinates.y)
-//		{
-//			return;
-//		}
-//		else
-//		{
-//			if (world.board[newCoordinates.x][newCoordinates.y]->getStrength() > this->getStrength())
-//			{
-//				newCoordinates = makeNewXY(this->coordinates);
-//			}
-//			else
-//			{
-//				this->newCoordinates = newCoordinates;
-//				this->basicCollision();
-//				return;
-//			}	
-//		}
-//		
-//	}
-//		
-//}

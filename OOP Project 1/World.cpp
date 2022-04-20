@@ -106,6 +106,8 @@ void World::printBoard() {
 
 	system("CLS");
 
+	cout << "World Simulation by Wiktor Wysocki 188628" << endl;
+
 	for (int i = 0; i < board.size(); i++)
 	{
 		for (int k = 0; k < board[i].size(); k++)
@@ -125,6 +127,8 @@ void World::printBoard() {
 	cout << "There are " + to_string(organisms.size()) + " alive" << endl;
 	cout << "---------------------------" << endl;
 	comments.clear();
+
+	cout << "Click 'n' for next turn, click 'x' to finish simulation" << endl;
 }
 
 void World::newTurn() {

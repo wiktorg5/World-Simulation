@@ -38,7 +38,7 @@ public:
 	int getNewY();
 	Coordinates getCoordinates();
 	Coordinates makeNewXYToSow(Coordinates coordinates);
-	string OrgToString();
+	virtual string OrgToString();
 
 	virtual ~Organism();
 };
@@ -155,7 +155,7 @@ public:
 	bool checkCoordinates(int direction);
 	void purification();
 	void specialAbilityHandling();
-	string OrgToString();
+	string OrgToString() override;
 
 	void setSpecialAbility(int specialAbility);
 	void setSpecialCooldown(int specialCooldown);
