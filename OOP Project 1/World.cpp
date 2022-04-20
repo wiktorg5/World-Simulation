@@ -2,6 +2,7 @@
 #include "World.h"
 #include<string>
 #include<algorithm>
+#include<fstream>
 
 World::World(int widthGiven, int heightGiven)
 {
@@ -221,3 +222,98 @@ void World::addOrganisms() {
 	AnimalsToAdd.clear();
 }
 
+void World::saveWorld() {
+	ofstream file;
+	file.open("world.txt");
+	for (int i = 0; i < organisms.size(); i++)
+	{
+		file<<organisms[i]->OrgToString();
+		file << "\n";
+	}
+	file.close();
+}
+
+Organism* World::orgBySymbol(char symbol,int age,struct Coordinates coordinates) {
+	if (symbol == '!')
+		return new Wolf(coordinates, *this);
+	else if (symbol == '@')
+		return new Sheep(coordinates, *this);
+	else if (symbol == '&')
+		return new Fox(coordinates, *this);
+	else if (symbol == '$')
+		return new Antelope(coordinates, *this);
+	else if (symbol == '#')
+		return new Turtle(coordinates, *this);
+	else if (symbol == '?')
+		return new Human(coordinates, *this);
+	else if (symbol == 'G')
+		return new Grass(coordinates, *this);
+	else if (symbol == 'S')
+		return new SowThistle(coordinates, *this);
+	else if (symbol == 'U')
+		return new Belladonna(coordinates, *this);
+	else if (symbol == 'g')
+		return new Guarana(coordinates, *this);
+	else if (symbol == 'H')
+		return new Hogweed(coordinates, *this);
+	else return NULL;
+
+}
+
+void World::clearBoard() {
+
+	board.clear();
+
+	for (int i = 0; i < height; i++)
+	{
+		board.push_back(vector<Organism*>());
+
+		for (int k = 0; k < width; k++)
+			this->board[i].push_back(NULL);
+	}
+}
+
+void World::loadWorld() {
+
+	ifstream file;
+	file.open("world.txt");
+
+	clearBoard();
+	organisms.clear();
+
+	while (!file.eof())
+	{
+		char symbol;
+		int  age;
+		Coordinates loadCoordinates;
+		file >> symbol;
+		file >> age;
+		file >> loadCoordinates.x;
+		file >> loadCoordinates.y;
+		Organism* newOrg = orgBySymbol(symbol, age, loadCoordinates);
+		if (Human* v = dynamic_cast<Human*>(newOrg))
+		{
+			Human* org = dynamic_cast<Human*>(newOrg);
+
+			int special;
+			file >> special;
+			org->setSpecialAbility(special);
+
+			int special_cooldown;
+			file >> special_cooldown;
+			org->setSpecialCooldown(special_cooldown);
+
+			this->board[loadCoordinates.x][loadCoordinates.y] = org;
+			org->age = age;
+			organisms.push_back(org);
+		}
+		else
+		{
+			this->board[loadCoordinates.x][loadCoordinates.y] = newOrg;
+			newOrg->age = age;
+			organisms.push_back(newOrg);
+		}
+	}
+	system("CLS");
+	this->printBoard();
+}

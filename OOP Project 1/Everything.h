@@ -38,6 +38,7 @@ public:
 	int getNewY();
 	Coordinates getCoordinates();
 	Coordinates makeNewXYToSow(Coordinates coordinates);
+	string OrgToString();
 
 	virtual ~Organism();
 };
@@ -144,6 +145,7 @@ public:
 
 class Human : public Animal {
 	bool special_ability = false;
+	int special_ability_cooldown = 0;
 	Coordinates newCoordinates;
 public:
 	Human(Coordinates coordinates, World& world);
@@ -152,5 +154,10 @@ public:
 	string draw();
 	bool checkCoordinates(int direction);
 	void purification();
+	void specialAbilityHandling();
+	string OrgToString();
+
+	void setSpecialAbility(int specialAbility);
+	void setSpecialCooldown(int specialCooldown);
 };
 

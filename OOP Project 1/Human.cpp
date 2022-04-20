@@ -30,6 +30,11 @@ void Human::action() {
 	int input = 0;
 	int direction = -1;
 
+	if (special_ability_cooldown > 0)
+		special_ability_cooldown--;
+	else if (special_ability_cooldown == 5)
+		special_ability = false;
+
 	while (true)
 	{
 		int toBreak = 0;
@@ -54,8 +59,7 @@ void Human::action() {
 			cout << "LEFT" << endl;
 			break;
 		case Q_SIGN:
-			this->special_ability = true;
-			cout << "Special ability activated" << endl;
+			specialAbilityHandling();
 		}
 		if (checkCoordinates(direction) == false)
 		{
@@ -129,8 +133,54 @@ void Human::purification() {
 				}
 			}
 			world.comments.push_back("Organism " + orgToKill->draw() + " has been killed by Organism " + this->draw() + " at position x:" + to_string(orgToKill->getX()) + " y: " + to_string(orgToKill->getY()));
-		}
-		
-		
+		}	
 	}
+}
+
+void Human::specialAbilityHandling() {
+	if (special_ability == false)
+	{
+		if (special_ability_cooldown == 0)
+		{
+			this->special_ability = true;
+			this->special_ability_cooldown = 10;
+			cout << "Special ability activated" << endl;
+		}
+		else
+		{
+			cout << "Wait" + to_string(special_ability_cooldown) + "more turns" << endl;
+		}
+	}
+	else
+	{
+		cout << "Special ability already activated" << endl;
+	}
+}
+
+string Human::OrgToString() {
+
+	string org;
+
+	org += this->draw();
+	org += " ";
+	org += to_string(this->age);
+	org += " ";
+	org += to_string(this->getX());
+	org += " ";
+	org += to_string(this->getY());
+	org += " ";
+	org += to_string(this->special_ability);
+	org += " ";
+	org += to_string(this->special_ability_cooldown);
+
+	cout << org << endl;
+	return org;
+}
+
+void Human::setSpecialAbility(int specialAbility) {
+	this->special_ability = specialAbility;
+}
+
+void Human::setSpecialCooldown(int specialCooldown) {
+	this->special_ability_cooldown = specialCooldown;
 }

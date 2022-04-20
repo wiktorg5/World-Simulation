@@ -5,7 +5,7 @@ Guarana::Guarana(Coordinates coordinates, World& world) : Plant(coordinates, wor
 };
 
 string Guarana::draw() {
-	return "U";
+	return "g";
 }
 
 Organism* Guarana::sowCopy(Coordinates coordinates) {

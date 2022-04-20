@@ -29,6 +29,10 @@ public:
 	Organism* getRandomOrganism(int x, int y);
 	void addOrganisms();
 	void moveEatPlant(Organism& killedOrganism, Organism& winOrganism);
+	void saveWorld();
+	void loadWorld();
+	Organism* orgBySymbol(char symbol, int age,struct Coordinates coordinates);
+	void clearBoard();
 
 	int getWidth();
 	int getHeight();

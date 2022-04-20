@@ -1,4 +1,5 @@
 #include "Everything.h"
+#include<string>
 
 Organism::Organism(Coordinates coordinates,World& world) : world(world){
 	this->coordinates = coordinates;
@@ -62,6 +63,21 @@ Coordinates Organism::makeNewXYToSow(Coordinates coordinates) {
 			return randomXY;
 		}
 	}
+}
+
+string Organism::OrgToString() {
+
+	string org;
+
+	org += this->draw();
+	org += " ";
+	org += to_string(this->age);
+	org += " ";
+	org += to_string(this->getX());
+	org += " ";
+	org += to_string(this->getY());
+
+	return org;
 }
 
 Organism::~Organism(){};
