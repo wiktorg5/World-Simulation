@@ -1,6 +1,5 @@
 #include<iostream>
 #include "World.h"
-#include "Everything.h"
 #include<conio.h>
 
 using namespace std;

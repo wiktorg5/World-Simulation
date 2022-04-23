@@ -1,8 +1,9 @@
-#include "Everything.h"
+#include "Classes.h"
 
 Animal::Animal(Coordinates coordinates,World& world)
 	: Organism(coordinates,world) {}
 
+//choosing new coordinates to move 
 Coordinates Animal::makeNewXY(Coordinates coordinates) {
 
 	vector<Coordinates> arrXY = arrComb;
@@ -25,6 +26,7 @@ Coordinates Animal::makeNewXY(Coordinates coordinates) {
 	{
 		if (newX >= this->world.getWidth() || newX < 0 || newY >= this->world.getHeight() || newY < 0)
 		{
+			// if there is no possible move we do not move
 			arrXY.erase(arrXY.begin() + randCombination);
 			if (arrXY.size() == 0)
 			{
@@ -52,6 +54,7 @@ void Animal::action() {
 	
 	this->newCoordinates = newCoordinates;
 
+	// if cell is empty we move there, else we collide with another object
 	if (world.board[newCoordinates.x][newCoordinates.y] == NULL)
 	{
 		world.board[newCoordinates.x][newCoordinates.y] = this;
@@ -85,6 +88,7 @@ void Animal::collision() {
 
 	int chanceToBackFight = rand() % 100;
 
+	// we choose collision mode basing on object colliding
 	if (Turtle* v = dynamic_cast<Turtle*>(world.board[this->newCoordinates.x][this->newCoordinates.y]))
 	{
 		if (this->strength > 5)
@@ -118,14 +122,15 @@ void Animal::breeding(Organism* secondAnimal) {
 
 	Coordinates newOrganismCoordinates;
 
+	//choosing by which parent new animal will spawn
 	int byWhichSpawn = rand() % 100;
 	if (byWhichSpawn < 50)
 	{
-		newOrganismCoordinates = makeNewXYToSow(this->coordinates);
+		newOrganismCoordinates = makeNewXYNULL(this->coordinates);
 	}
 	else
 	{
-		newOrganismCoordinates = makeNewXYToSow(secondAnimal->getCoordinates());
+		newOrganismCoordinates = makeNewXYNULL(secondAnimal->getCoordinates());
 	}
 	this->breedBasic(newOrganismCoordinates);
 	cout << "Breeding" << endl;

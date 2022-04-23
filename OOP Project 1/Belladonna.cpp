@@ -1,4 +1,4 @@
-#include "Everything.h"
+#include "Classes.h"
 
 Belladonna::Belladonna(Coordinates coordinates, World& world) : Plant(coordinates, world) {
 	this->strength = 99;

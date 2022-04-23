@@ -1,4 +1,4 @@
-#include "Everything.h"
+#include "Classes.h"
 #include <conio.h>
 #include <string>
 
@@ -30,11 +30,13 @@ void Human::action() {
 	int input = 0;
 	int direction = -1;
 
+	// changing special ability info
 	if (special_ability_cooldown > 0)
 		special_ability_cooldown--;
 	else if (special_ability_cooldown == 5)
 		special_ability = false;
 
+	// getting user input
 	while (true)
 	{
 		int toBreak = 0;
@@ -61,6 +63,8 @@ void Human::action() {
 		case Q_SIGN:
 			specialAbilityHandling();
 		}
+
+		// checking if user has chosen feasible direction
 		if (checkCoordinates(direction) == false)
 		{
 			cout << "Choose proper direction or do not choose any direction" << endl;
@@ -70,9 +74,11 @@ void Human::action() {
 			break;
 	}
 
+	// if user has chosen any direction then move
 	if(direction != -1)
 		changeHumanPosition();
 
+	// if special ability is activated, use it
 	if (special_ability)
 		purification();
 }
@@ -110,6 +116,7 @@ void Human::changeHumanPosition() {
 		world.board[coordinates.x][coordinates.y] = this;
 }
 
+// special ability killing everything in adjecent cells
 void Human::purification() {
 	for (int i = 0; i < arrComb.size(); i++)
 	{
@@ -137,6 +144,7 @@ void Human::purification() {
 	}
 }
 
+// function changing state of special ability after user input
 void Human::specialAbilityHandling() {
 	if (special_ability == false)
 	{

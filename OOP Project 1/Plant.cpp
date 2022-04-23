@@ -1,4 +1,4 @@
-#include "Everything.h"
+#include "Classes.h"
 
 Plant::Plant(Coordinates coordinates,World& world)
 	: Organism(coordinates, world) {
@@ -13,7 +13,7 @@ void Plant::action() {
 
 		if (sowingProbability > 98)
 		{
-			Coordinates sowCoordinates = makeNewXYToSow(this->coordinates);
+			Coordinates sowCoordinates = makeNewXYNULL(this->coordinates);
 
 			if (sowCoordinates.x == this->coordinates.x && sowCoordinates.y == this->coordinates.y)
 				return;

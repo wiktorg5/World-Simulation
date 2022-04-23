@@ -1,4 +1,4 @@
-#include "Everything.h"
+#include "Classes.h"
 #include<string>
 
 Organism::Organism(Coordinates coordinates,World& world) : world(world){
@@ -29,7 +29,8 @@ Coordinates Organism::getCoordinates() {
 	return this->coordinates;
 }
 
-Coordinates Organism::makeNewXYToSow(Coordinates coordinates) {
+// making new coordinates on NULL position
+Coordinates Organism::makeNewXYNULL(Coordinates coordinates) {
 
 	vector<Coordinates> arrXY = arrComb;
 
@@ -44,6 +45,8 @@ Coordinates Organism::makeNewXYToSow(Coordinates coordinates) {
 		if (newX >= this->world.getWidth() || newX < 0 || newY >= this->world.getHeight() || newY < 0 || world.board[newX][newY] != NULL)
 		{
 			arrXY.erase(arrXY.begin() + randCombination);
+
+			// if there is no free neighbouring cell we return current position
 			if (arrXY.size() == 0)
 			{
 				return coordinates;
@@ -65,6 +68,7 @@ Coordinates Organism::makeNewXYToSow(Coordinates coordinates) {
 	}
 }
 
+// function for saving Organism data
 string Organism::OrgToString() {
 
 	string org;

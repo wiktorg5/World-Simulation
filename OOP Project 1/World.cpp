@@ -1,9 +1,9 @@
-#include "Everything.h"
 #include "World.h"
 #include<string>
 #include<algorithm>
 #include<fstream>
 
+//constructing world with board of NULLs
 World::World(int widthGiven, int heightGiven)
 {
 	this->height = heightGiven;
@@ -18,6 +18,7 @@ World::World(int widthGiven, int heightGiven)
 	}
 }
 
+//sorting of alive organisms vector
 void World::sortOrganisms() {
 	sort(organisms.begin(), organisms.end(), compareOrganisms);
 }
@@ -66,6 +67,8 @@ Organism* World::getRandomOrganism(int x,int y) {
 
 	return org;
 }
+
+//populating board with random organisms at start
 void World::firstOrganisms() {
 	int numberOfOrganisms = (height * width) / 20;
 	if (numberOfOrganisms == 0)
@@ -160,6 +163,7 @@ void World::newTurn() {
 	this->addOrganisms();
 }
 
+//moving win organism and deleting losing organism
 void World::moveAfterKill(Organism& killedOrganism, Organism& winOrganism, Organism& attacker){
 	comments.push_back("Organism " + killedOrganism.draw() + " has been killed by Organism " + winOrganism.draw() + " at position x:" + to_string(winOrganism.getX()) + " y: " + to_string(winOrganism.getY()));
 	if (&killedOrganism == &attacker)
@@ -204,10 +208,13 @@ void World::kill(Organism& killedOrganism, Organism& winOrganism, Organism& atta
 	}
 }
 
+//move animal on the plave of eaten plant
 void World::moveEatPlant(Organism& killedOrganism, Organism& winOrganism) {
 	board[killedOrganism.getX()][killedOrganism.getY()] = NULL;
 	board[winOrganism.getX()][winOrganism.getY()] = NULL;
 }
+
+//adding organisms which have spawned in last turn
 void World::addOrganisms() {
 	for (int i = 0; i < plantsToAdd.size(); i++)
 	{
@@ -237,6 +244,7 @@ void World::saveWorld() {
 	file.close();
 }
 
+//returning organism depending on given symbol
 Organism* World::orgBySymbol(char symbol,int age,struct Coordinates coordinates) {
 	if (symbol == '!')
 		return new Wolf(coordinates, *this);

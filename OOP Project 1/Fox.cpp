@@ -1,4 +1,4 @@
-#include "Everything.h"
+#include "Classes.h"
 
 Fox::Fox(Coordinates coordinates, World& world)
 	: Animal(coordinates,world) {
@@ -23,6 +23,7 @@ Coordinates Fox::makeNewXY(Coordinates coordinates) {
 
 	while (true)
 	{
+		// trying to find coordinates with no strongerr enemy
 		if (newX >= this->world.getWidth() || newX < 0 || newY >= this->world.getHeight() || newY < 0 || world.board[randomXY.x][randomXY.y]->getStrength() > this->getStrength())
 		{
 			arrXY.erase(arrXY.begin() + randCombination);

@@ -1,4 +1,4 @@
-#include "Everything.h"
+#include "Classes.h"
 
 Wolf::Wolf(Coordinates coordinates, World& world)
 	:Animal(coordinates,world) {

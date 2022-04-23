@@ -36,8 +36,9 @@ public:
 	int getY();
 	int getNewX();
 	int getNewY();
+
 	Coordinates getCoordinates();
-	Coordinates makeNewXYToSow(Coordinates coordinates);
+	Coordinates makeNewXYNULL(Coordinates coordinates);
 	virtual string OrgToString();
 
 	virtual ~Organism();
@@ -91,7 +92,6 @@ public:
 	Antelope(Coordinates coordinates, World& world);
 	string draw();
 	void backFromFight(Antelope* org);
-	Coordinates makeNewXYAfterFight(Coordinates coordinates);
 	Organism* breedCopy(Coordinates coordinates);
 };
 
