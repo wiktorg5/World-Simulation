@@ -157,7 +157,6 @@
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Constants.h" />
     <ClInclude Include="Classes.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>

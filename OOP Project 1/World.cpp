@@ -115,10 +115,10 @@ void World::printBoard() {
 	{
 		for (int k = 0; k < board[i].size(); k++)
 		{
-			if (board[i][k] == NULL)
+			if (board[k][i] == NULL)
 				cout << " ";
 			else
-				cout << board[i][k]->draw();
+				cout << board[k][i]->draw();
 		}
 		cout << endl;
 	}
@@ -218,7 +218,7 @@ void World::moveEatPlant(Organism& killedOrganism, Organism& winOrganism) {
 void World::addOrganisms() {
 	for (int i = 0; i < plantsToAdd.size(); i++)
 	{
-		cout << plantsToAdd[i]->draw() << endl;
+		comments.push_back("New Plant: " + plantsToAdd[i]->draw() + " spawned at position x:" + to_string(plantsToAdd[i]->getX()) + " y: " + to_string(plantsToAdd[i]->getY()));
 		this->organisms.push_back(plantsToAdd[i]);
 		this->board[plantsToAdd[i]->coordinates.x][plantsToAdd[i]->coordinates.y] = plantsToAdd[i];
 	}
@@ -226,7 +226,7 @@ void World::addOrganisms() {
 
 	for (int i = 0; i < AnimalsToAdd.size(); i++)
 	{
-		cout << AnimalsToAdd[i]->draw() << endl;
+		comments.push_back("New Animal: " + AnimalsToAdd[i]->draw() + " spawned at position x:" + to_string(AnimalsToAdd[i]->getX()) + " y: " + to_string(AnimalsToAdd[i]->getY()));
 		this->organisms.push_back(AnimalsToAdd[i]);
 		this->board[AnimalsToAdd[i]->coordinates.x][AnimalsToAdd[i]->coordinates.y] = AnimalsToAdd[i];
 	}

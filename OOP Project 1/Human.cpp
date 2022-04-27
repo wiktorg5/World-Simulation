@@ -32,9 +32,9 @@ void Human::action() {
 
 	// changing special ability info
 	if (special_ability_cooldown > 0)
-		special_ability_cooldown--;
-	else if (special_ability_cooldown == 5)
-		special_ability = false;
+		this->special_ability_cooldown--;
+	if (special_ability_cooldown == 5)
+		this->special_ability = false;
 
 	// getting user input
 	while (true)
@@ -88,13 +88,13 @@ bool Human::checkCoordinates(int direction) {
 	int newY = this->coordinates.y;
 
 	if (direction == UP)
-		newX--;
-	else if (direction == RIGHT)
-		newY++;
-	else if (direction == DOWN)
-		newX++;
-	else if (direction == LEFT)
 		newY--;
+	else if (direction == RIGHT)
+		newX++;
+	else if (direction == DOWN)
+		newY++;
+	else if (direction == LEFT)
+		newX--;
 
 	if (newX >= this->world.getWidth() || newX < 0 || newY >= this->world.getHeight() || newY < 0)
 	{
@@ -156,7 +156,7 @@ void Human::specialAbilityHandling() {
 		}
 		else
 		{
-			cout << "Wait" + to_string(special_ability_cooldown) + "more turns" << endl;
+			cout << "Wait " + to_string(special_ability_cooldown) + " more turns" << endl;
 		}
 	}
 	else

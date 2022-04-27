@@ -10,7 +10,6 @@ class Organism;
 class World {
 	int width, height;
 	int turnNumber = 0;
-	
 public:
 	vector< vector< Organism* > > board;
 	vector<Organism*> organisms;
@@ -34,6 +33,7 @@ public:
 	Organism* orgBySymbol(char symbol, int age,struct Coordinates coordinates);
 	void clearBoard();
 
+	// getters
 	int getWidth();
 	int getHeight();
 };
