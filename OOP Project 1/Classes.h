@@ -26,7 +26,6 @@ public:
 	virtual void action() =0;
 	virtual void collision() = 0;
 	virtual string draw() = 0;
-	//virtual Organism* makeCopy(Coordinates coordinates) = 0;
 
 	//setters
 	void setCoordinates(Coordinates newCoordinates);

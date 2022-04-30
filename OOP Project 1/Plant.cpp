@@ -26,8 +26,4 @@ void Plant::action() {
 	}
 }
 
-void Plant::collision() {
-
-}
-
 Organism* Plant::sowCopy(Coordinates coordinates) { return 0; };
