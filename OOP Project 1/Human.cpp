@@ -181,7 +181,6 @@ string Human::OrgToString() {
 	org += " ";
 	org += to_string(this->special_ability_cooldown);
 
-	cout << org << endl;
 	return org;
 }
 

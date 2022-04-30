@@ -242,6 +242,8 @@ void World::saveWorld() {
 		file << "\n";
 	}
 	file.close();
+	
+	cout << "World has been saved" << endl;
 }
 
 //returning organism depending on given symbol
